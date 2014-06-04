@@ -11,8 +11,6 @@ __metaclass__ = PoolMeta
 class SaleLine:
     __name__ = 'sale.line'
     delivery_date = fields.Date('Delivery Date',
-            on_change_with=['product', 'quantity', '_parent_sale.sale_date',
-            'delivery_date'],
             states={
                 'invisible': ((Eval('type') != 'line')
                     | (If(Bool(Eval('quantity')), Eval('quantity', 0), 0)
@@ -20,6 +18,8 @@ class SaleLine:
                 },
             depends=['type', 'quantity'])
 
+    @fields.depends('product', 'quantity', '_parent_sale.sale_date',
+        'delivery_date')
     def on_change_with_delivery_date(self):
         if not self.product or not self.quantity:
             return
