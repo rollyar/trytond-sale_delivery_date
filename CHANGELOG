@@ -1,3 +1,8 @@
+Version 3.4.1 - 2015-01-19
+* Add scenario
+* Change internal fields definition because it doesn't work for 3.4
+* Group customer shipments by delivery date
+
 Version 3.4.0 - 2014-11-03
 
 Version 3.2.0 - 2014-06-04
