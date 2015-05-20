@@ -27,13 +27,18 @@ class Sale:
 
 class SaleLine:
     __name__ = 'sale.line'
-    manual_delivery_date = fields.Date('Manual Delivery Date', readonly=True)
+    manual_delivery_date = fields.Date('Delivery Date',
+            states={
+                'invisible': ((Eval('type') != 'line')
+                    | (If(Bool(Eval('quantity')), Eval('quantity', 0), 0)
+                        <= 0)),
+                },
+            depends=['type', 'quantity'])
 
     @classmethod
     def __setup__(cls):
         super(SaleLine, cls).__setup__()
-        cls.delivery_date.readonly = False
-        cls.delivery_date.setter = 'set_delivery_date'
+        cls.delivery_date.states['invisible'] = True
 
     @classmethod
     def __register__(cls, module_name):
@@ -54,17 +59,13 @@ class SaleLine:
                     values=[sql_table.delivery_date]))
             table.drop_column('delivery_date')
 
-    @fields.depends('product', 'quantity', '_parent_sale.sale_date',
-        'manual_delivery_date')
-    def on_change_with_delivery_date(self, name=None):
-        if not self.product or not self.quantity:
-            return
+    @fields.depends('manual_delivery_date', methods=['delivery_date'])
+    def on_change_with_manual_delivery_date(self):
         if self.manual_delivery_date:
             return self.manual_delivery_date
-        return super(SaleLine, self).on_change_with_delivery_date()
+        return super(SaleLine,
+            self).on_change_with_delivery_date(name='delivery_date')
 
-    @classmethod
-    def set_delivery_date(cls, records, name, value):
-        cls.write(records, {
-                'manual_delivery_date': value,
-                })
+    @fields.depends('manual_delivery_date')
+    def on_change_with_delivery_date(self, name=None):
+        return self.manual_delivery_date

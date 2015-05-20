@@ -1,3 +1,6 @@
+* Replace delivery_date by editable manual_delivery_date field to don't add
+  setter to original functional field
+
 Version 3.4.1 - 2015-01-19
 * Add scenario
 * Change internal fields definition because it doesn't work for 3.4

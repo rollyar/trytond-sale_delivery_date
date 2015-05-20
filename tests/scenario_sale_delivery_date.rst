@@ -201,11 +201,11 @@ shipments::
     >>> sale_line = sale.lines.new()
     >>> sale_line.product = product
     >>> sale_line.quantity = 5.0
-    >>> sale_line.delivery_date = tomorrow
+    >>> sale_line.manual_delivery_date = tomorrow
     >>> sale_line = sale.lines.new()
     >>> sale_line.product = second_product
     >>> sale_line.quantity = 5.0
-    >>> sale_line.delivery_date = next_week
+    >>> sale_line.manual_delivery_date = next_week
     >>> sale.save()
     >>> sale.reload()
     >>> sorted([l.delivery_date for l in sale.lines]) == [tomorrow, next_week]
