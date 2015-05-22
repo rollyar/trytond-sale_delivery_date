@@ -1,3 +1,4 @@
+* Add technical documentation
 * Add manual_delivery_date column to sale.line lists
 * Replace delivery_date by editable manual_delivery_date field to don't add
   setter to original functional field
