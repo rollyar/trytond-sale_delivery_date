@@ -1,3 +1,4 @@
+Version 3.4.2 - 2015-05-22
 * Add technical documentation
 * Add manual_delivery_date column to sale.line lists
 * Replace delivery_date by editable manual_delivery_date field to don't add
