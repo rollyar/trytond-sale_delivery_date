@@ -1,7 +1,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond import backend
-from trytond.pool import PoolMeta
+from trytond.pool import Pool, PoolMeta
 from trytond.model import fields
 from trytond.pyson import Eval, Bool, If
 from trytond.transaction import Transaction
@@ -12,6 +12,24 @@ __metaclass__ = PoolMeta
 
 class Sale:
     __name__ = 'sale.sale'
+
+    @classmethod
+    def process(cls, sales):
+        pool = Pool()
+        SaleLine = pool.get('sale.line')
+        to_write = []
+        for sale in sales:
+            for line in sale.lines:
+                if (line.type == 'line' and line.product
+                        and not line.manual_delivery_date):
+                    date = line.on_change_with_delivery_date(
+                        name='delivery_date')
+                    to_write.extend(([line], {
+                                'manual_delivery_date': date,
+                                }))
+        if to_write:
+            SaleLine.write(*to_write)
+        super(Sale, cls).process(sales)
 
     def _group_shipment_key(self, moves, move):
         # Group shipments by move planned_date, so one shipment is created
@@ -68,4 +86,12 @@ class SaleLine:
 
     @fields.depends('manual_delivery_date')
     def on_change_with_delivery_date(self, name=None):
-        return self.manual_delivery_date
+        return self.manual_delivery_date or super(SaleLine,
+            self).on_change_with_delivery_date(name=name)
+
+    @classmethod
+    def copy(cls, lines, default=None):
+        if default is None:
+            default = {}
+        default.setdefault('manual_delivery_date')
+        return super(SaleLine, cls).copy(lines, default)
