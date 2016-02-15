@@ -58,6 +58,9 @@ class SaleLine:
         super(SaleLine, cls).__setup__()
         cls.delivery_date.states['invisible'] = True
 
+        if hasattr(cls, '_allow_modify_after_draft'):
+            cls._allow_modify_after_draft.add('manual_delivery_date')
+
     @classmethod
     def __register__(cls, module_name):
         TableHandler = backend.get('TableHandler')
