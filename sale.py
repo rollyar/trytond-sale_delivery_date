@@ -22,7 +22,7 @@ class Sale:
             for line in sale.lines:
                 if (line.type == 'line' and line.product
                         and not line.manual_delivery_date):
-                    date = line.on_change_with_delivery_date(
+                    date = line.on_change_with_shipping_date(
                         name='shipping_date')
                     to_write.extend(([line], {
                                 'manual_delivery_date': date,
