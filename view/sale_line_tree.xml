@@ -3,6 +3,6 @@
      copyright notices and license terms. -->
 <data>
     <xpath expr="/tree/field[@name='unit']" position="after">
-        <field name="manual_delivery_date"/>
+        <field name="requested_delivery_date"/>
     </xpath>
 </data>

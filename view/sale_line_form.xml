@@ -2,8 +2,8 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/form//label[@name='shipping_date']" position="before">
-        <label name="manual_delivery_date"/>
-        <field name="manual_delivery_date"/>
+    <xpath expr="/form//field[@name='shipping_date']" position="after">
+        <label name="requested_delivery_date"/>
+        <field name="requested_delivery_date"/>
     </xpath>
 </data>

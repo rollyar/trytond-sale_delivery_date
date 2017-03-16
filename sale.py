@@ -21,12 +21,12 @@ class Sale:
         for sale in sales:
             for line in sale.lines:
                 if (line.type == 'line' and line.product
-                        and not line.manual_delivery_date):
+                        and not line.requested_delivery_date):
                     date = line.on_change_with_shipping_date(
                         name='shipping_date')
                     to_write.extend(([line], {
-                                'manual_delivery_date': date,
-                                }))
+                        'requested_delivery_date': date,
+                    }))
         if to_write:
             SaleLine.write(*to_write)
         super(Sale, cls).process(sales)
@@ -45,18 +45,13 @@ class Sale:
 
 class SaleLine:
     __name__ = 'sale.line'
-    manual_delivery_date = fields.Date('Delivery Date',
-            states={
-                'invisible': ((Eval('type') != 'line')
-                    | (If(Bool(Eval('quantity')), Eval('quantity', 0), 0)
-                        <= 0)),
-                },
-            depends=['type', 'quantity'])
-
-    @classmethod
-    def __setup__(cls):
-        super(SaleLine, cls).__setup__()
-        cls.shipping_date.states['invisible'] = True
+    requested_delivery_date = fields.Date('Fecha de entrega requerida',
+        states={
+            'invisible': ((Eval('type') != 'line')
+                | (If(Bool(Eval('quantity')), Eval('quantity', 0), 0)
+                    <= 0)),
+        },
+        depends=['type', 'quantity'])
 
     @classmethod
     def __register__(cls, module_name):
@@ -66,32 +61,42 @@ class SaleLine:
 
         # Migration from 3.2
         table = TableHandler(cls, module_name)
-        move_delivery_dates = (not table.column_exist('manual_delivery_date')
+        move_delivery_dates = (
+            not table.column_exist('requested_delivery_date')
             and table.column_exist('shipping_date'))
+
+        # Because of the change of the field's name manual_delivery_date to
+        # requested_delivery_date
+        if (table.column_exist('manual_delivery_date')
+                and not table.column_exist('requested_delivery_date')):
+            table.column_rename('manual_delivery_date',
+                'requested_delivery_date')
 
         super(SaleLine, cls).__register__(module_name)
 
         if move_delivery_dates:
             cursor.execute(*sql_table.update(
-                    columns=[sql_table.manual_delivery_date],
-                    values=[sql_table.shipping_date]))
+                columns=[sql_table.requested_delivery_date],
+                values=[sql_table.shipping_date]))
             table.drop_column('shipping_date')
 
-    @fields.depends('manual_delivery_date', methods=['shipping_date'])
-    def on_change_with_manual_delivery_date(self):
-        if self.manual_delivery_date:
-            return self.manual_delivery_date
+    @fields.depends('requested_delivery_date', methods=['shipping_date'])
+    def on_change_with_requested_delivery_date(self):
+        if self.requested_delivery_date:
+            return self.requested_delivery_date
         return super(SaleLine,
             self).on_change_with_shipping_date(name='shipping_date')
 
-    @fields.depends('manual_delivery_date')
+    @fields.depends('requested_delivery_date', 'moves')
     def on_change_with_shipping_date(self, name=None):
-        return self.manual_delivery_date or super(SaleLine,
-            self).on_change_with_shipping_date(name=name)
+        if self.moves:
+            return super(SaleLine, self).on_change_with_shipping_date()
+        else:
+            return self.requested_delivery_date
 
     @classmethod
     def copy(cls, lines, default=None):
         if default is None:
             default = {}
-        default.setdefault('manual_delivery_date')
+        default.setdefault('requested_delivery_date')
         return super(SaleLine, cls).copy(lines, default)
