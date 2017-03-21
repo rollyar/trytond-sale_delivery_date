@@ -47,7 +47,7 @@ class Sale:
 
 class SaleLine:
     __name__ = 'sale.line'
-    requested_delivery_date = fields.Date('Fecha de envio requerida',
+    requested_delivery_date = fields.Date('Requested Delivery Date',
         states={
             'invisible': ((Eval('type') != 'line') |
             (If(Bool(Eval('quantity')), Eval('quantity', 0), 0) <= 0)),
