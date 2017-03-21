@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond import backend
@@ -45,7 +47,7 @@ class Sale:
 
 class SaleLine:
     __name__ = 'sale.line'
-    requested_delivery_date = fields.Date('Fecha de entrega requerida',
+    requested_delivery_date = fields.Date('Fecha de envío requerida',
         states={
             'invisible': ((Eval('type') != 'line')
                 | (If(Bool(Eval('quantity')), Eval('quantity', 0), 0)
