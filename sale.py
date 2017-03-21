@@ -23,7 +23,7 @@ class Sale:
         for sale in sales:
             for line in sale.lines:
                 if (line.type == 'line' and line.product and
-                    not line.requested_delivery_date):
+                        not line.requested_delivery_date):
                     date = line.on_change_with_shipping_date(
                         name='shipping_date')
                     to_write.extend(([line], {
@@ -50,9 +50,8 @@ class SaleLine:
     requested_delivery_date = fields.Date('Fecha de envio requerida',
         states={
             'invisible': ((Eval('type') != 'line') |
-                (If(Bool(Eval('quantity')), Eval('quantity', 0), 0) <= 0)),
-        },
-        depends=['type', 'quantity'])
+            (If(Bool(Eval('quantity')), Eval('quantity', 0), 0) <= 0)),
+        }, depends=['type', 'quantity'])
 
     @classmethod
     def __register__(cls, module_name):
@@ -68,9 +67,10 @@ class SaleLine:
 
         # Because of the change of the field's name manual_delivery_date to
         # requested_delivery_date
-        if (table.column_exist('manual_delivery_date')
-                and not table.column_exist('requested_delivery_date')):
-            table.column_rename('manual_delivery_date',
+        if (table.column_exist('manual_delivery_date') and
+                not table.column_exist('requested_delivery_date')):
+            table.column_rename(
+                'manual_delivery_date',
                 'requested_delivery_date')
 
         super(SaleLine, cls).__register__(module_name)
