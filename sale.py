@@ -22,8 +22,8 @@ class Sale:
         to_write = []
         for sale in sales:
             for line in sale.lines:
-                if (line.type == 'line' and line.product
-                        and not line.requested_delivery_date):
+                if (line.type == 'line' and line.product and
+                    not line.requested_delivery_date):
                     date = line.on_change_with_shipping_date(
                         name='shipping_date')
                     to_write.extend(([line], {
@@ -47,11 +47,10 @@ class Sale:
 
 class SaleLine:
     __name__ = 'sale.line'
-    requested_delivery_date = fields.Date('Fecha de envío requerida',
+    requested_delivery_date = fields.Date('Fecha de envio requerida',
         states={
-            'invisible': ((Eval('type') != 'line')
-                | (If(Bool(Eval('quantity')), Eval('quantity', 0), 0)
-                    <= 0)),
+            'invisible': ((Eval('type') != 'line') |
+                (If(Bool(Eval('quantity')), Eval('quantity', 0), 0) <= 0)),
         },
         depends=['type', 'quantity'])
 
@@ -64,8 +63,8 @@ class SaleLine:
         # Migration from 3.2
         table = TableHandler(cls, module_name)
         move_delivery_dates = (
-            not table.column_exist('requested_delivery_date')
-            and table.column_exist('shipping_date'))
+            not table.column_exist('requested_delivery_date') and
+            table.column_exist('shipping_date'))
 
         # Because of the change of the field's name manual_delivery_date to
         # requested_delivery_date
