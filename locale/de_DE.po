@@ -2,6 +2,6 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
-msgctxt "field:sale.line,manual_delivery_date:"
-msgid "Delivery Date"
-msgstr "Lieferdatum"
+msgctxt "field:sale.line,requested_delivery_date:"
+msgid "Requested Delivery Date"
+msgstr "Modifiziertes Lieferdatum"
