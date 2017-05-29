@@ -88,12 +88,10 @@ class SaleLine:
         return super(SaleLine,
             self).on_change_with_shipping_date(name='shipping_date')
 
-    @fields.depends('requested_delivery_date', 'moves')
+    @fields.depends('requested_delivery_date')
     def on_change_with_shipping_date(self, name=None):
-        if self.moves:
-            return super(SaleLine, self).on_change_with_shipping_date()
-        else:
-            return self.requested_delivery_date
+        return self.requested_delivery_date or super(SaleLine,
+            self).on_change_with_shipping_date()
 
     @classmethod
     def copy(cls, lines, default=None):
