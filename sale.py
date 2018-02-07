@@ -7,10 +7,10 @@ from trytond.pyson import Eval, Bool, If
 from trytond.transaction import Transaction
 
 __all__ = ['Sale', 'SaleLine']
-__metaclass__ = PoolMeta
 
 
 class Sale:
+    __metaclass__ = PoolMeta
     __name__ = 'sale.sale'
 
     @classmethod
@@ -44,6 +44,7 @@ class Sale:
 
 
 class SaleLine:
+    __metaclass__ = PoolMeta
     __name__ = 'sale.line'
     manual_delivery_date = fields.Date('Delivery Date',
             states={

@@ -9,6 +9,7 @@ Imports::
     >>> from decimal import Decimal
     >>> from operator import attrgetter
     >>> from proteus import config, Model, Wizard
+    >>> from trytond.tests.tools import activate_modules
     >>> from trytond.modules.company.tests.tools import create_company, \
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
@@ -19,17 +20,9 @@ Imports::
     >>> tomorrow = datetime.date.today() + relativedelta(days=1)
     >>> next_week = datetime.date.today() + relativedelta(weeks=1)
 
-Create database::
-
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
 Install sale_delivery_date::
 
-    >>> Module = Model.get('ir.module')
-    >>> module, = Module.find([('name', '=', 'sale_delivery_date')])
-    >>> Module.install([module.id], config.context)
-    >>> Wizard('ir.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('sale_delivery_date')
 
 Create company::
 
