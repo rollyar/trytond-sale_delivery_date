@@ -9,8 +9,7 @@ from trytond.transaction import Transaction
 __all__ = ['Sale', 'SaleLine']
 
 
-class Sale:
-    __metaclass__ = PoolMeta
+class Sale(metaclass=PoolMeta):
     __name__ = 'sale.sale'
 
     @classmethod
@@ -43,8 +42,7 @@ class Sale:
         return tuple(new_grouping)
 
 
-class SaleLine:
-    __metaclass__ = PoolMeta
+class SaleLine(metaclass=PoolMeta):
     __name__ = 'sale.line'
     manual_delivery_date = fields.Date('Delivery Date',
             states={
@@ -78,7 +76,8 @@ class SaleLine:
                     values=[sql_table.shipping_date]))
             table.drop_column('shipping_date')
 
-    @fields.depends('manual_delivery_date', methods=['shipping_date'])
+    @fields.depends('manual_delivery_date',
+        methods=['on_change_with_shipping_date'])
     def on_change_with_manual_delivery_date(self):
         if self.manual_delivery_date:
             return self.manual_delivery_date
