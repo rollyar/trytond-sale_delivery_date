@@ -59,11 +59,12 @@ class SaleLine(metaclass=PoolMeta):
 
     @classmethod
     def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
         cursor = Transaction().connection.cursor()
         sql_table = cls.__table__()
 
         # Migration from 3.2
-        table = backend.TableHandler(cls, module_name)
+        table = TableHandler(cls, module_name)
         move_delivery_dates = (not table.column_exist('manual_delivery_date')
             and table.column_exist('shipping_date'))
 
